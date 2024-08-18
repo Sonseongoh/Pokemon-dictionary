@@ -1,18 +1,21 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { Loading } from "../../assets/Loading";
 import { Link } from "react-router-dom";
-import { LessThan } from "../../assets/LessThan";
-import { GreaterThan } from "../../assets/GreaterThan";
 import { ArrowLeft } from "../../assets/ArrowLeft";
 import { Balance } from "../../assets/Balance";
+import { GreaterThan } from "../../assets/GreaterThan";
+import { LessThan } from "../../assets/LessThan";
+import { Loading } from "../../assets/Loading";
 import { Vector } from "../../assets/Vector";
+import BaseStat from "../../components/BaseStat";
+import DamageModal from "../../components/DamageModal";
 import Type from "../../components/Type";
 
 const DetailPage = () => {
   const [pokemon, setPokemon] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const params = useParams();
   const pokemonId = params.id;
@@ -160,6 +163,7 @@ const DetailPage = () => {
               loading="lazy"
               alt={pokemon.name}
               className={`object-contain h-full`}
+              onClick={() => setIsModalOpen(true)}
             />
           </div>
         </section>
@@ -204,18 +208,38 @@ const DetailPage = () => {
           </div>
 
           <h2 className={`text-base font-semibold ${text}`}>기본 능력치</h2>
-          <div className="w-full">Stat</div>
+          <div className="w-full">
+            <table>
+              <tbody>
+                {pokemon.stats.map((stat) => (
+                  <BaseStat
+                    key={stat.name}
+                    valueStat={stat.baseStat}
+                    nameStat={stat.name}
+                    type={pokemon.types[0]}
+                  />
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-          {pokemon.DamageRelations && (
+          {/* {pokemon.DamageRelations && (
             <div className="w-10/12">
               <h2 className={`text-base font-semibold text-center ${text}`}>
-                데미지 관계
+                <DamageRelations damages={pokemon.DamageRelations} />
               </h2>
               데미지
             </div>
-          )}
+          )} */}
         </section>
       </div>
+
+      {isModalOpen && (
+        <DamageModal
+          setIsModalOpen={setIsModalOpen}
+          damages={pokemon.DamageRelations}
+        />
+      )}
     </article>
   );
 };
