@@ -14,7 +14,7 @@ import Type from "../../components/Type";
 
 const DetailPage = () => {
   const [pokemon, setPokemon] = useState();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const params = useParams();
@@ -22,11 +22,12 @@ const DetailPage = () => {
   const baseUrl = `https://pokeapi.co/api/v2/pokemon/`;
 
   useEffect(() => {
-    fetchPokemonData();
-  }, []);
+    setIsLoading(true);
+    fetchPokemonData(pokemonId);
+  }, [pokemonId]);
 
-  async function fetchPokemonData() {
-    const url = `${baseUrl}${pokemonId}`;
+  async function fetchPokemonData(id) {
+    const url = `${baseUrl}${id}`;
     try {
       const { data: pokemonData } = await axios.get(url);
       if (pokemonData) {
@@ -127,8 +128,8 @@ const DetailPage = () => {
       pokemonData.previous && (await axios.get(pokemonData.previous));
 
     return {
-      next: nextResponse?.data?.results?.[0],
-      previous: previousResponse?.data?.results?.[0],
+      next: nextResponse?.data?.results?.[0].name,
+      previous: previousResponse?.data?.results?.[0].name,
     };
   }
 
