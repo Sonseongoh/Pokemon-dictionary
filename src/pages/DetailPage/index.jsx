@@ -30,7 +30,7 @@ const DetailPage = () => {
     try {
       const { data: pokemonData } = await axios.get(url);
       if (pokemonData) {
-        const { name, id, types, weight, height, stats, abilities } =
+        const { name, id, types, weight, height, stats, abilities, sprites } =
           pokemonData;
 
         const nextAndPreviousPokemon = await getNextAndPreviousPokemon(id);
@@ -53,6 +53,7 @@ const DetailPage = () => {
           stats: formatPokemonStats(stats),
           DamageRelations,
           types: types.map((type) => type.type.name),
+          sprites: formatPokemonSprites(sprites),
         };
         setPokemon(formattedPokemonData);
         setIsLoading(false);
@@ -62,6 +63,17 @@ const DetailPage = () => {
       setIsLoading(false);
     }
   }
+
+  const formatPokemonSprites = (sprites) => {
+    const newSprites = { ...sprites };
+    Object.keys(newSprites).forEach((key) => {
+      if (typeof newSprites[key] !== "string") {
+        delete newSprites[key];
+      }
+    });
+
+    return Object.values(newSprites);
+  };
 
   const formatPokemonStats = ([
     statHP,
@@ -222,15 +234,11 @@ const DetailPage = () => {
               </tbody>
             </table>
           </div>
-
-          {/* {pokemon.DamageRelations && (
-            <div className="w-10/12">
-              <h2 className={`text-base font-semibold text-center ${text}`}>
-                <DamageRelations damages={pokemon.DamageRelations} />
-              </h2>
-              데미지
-            </div>
-          )} */}
+          <div className="flex my-8 flex-wrap justify-center">
+            {pokemon.sprites.map((url, index) => (
+              <img src={url} key={index} alt="sprite" />
+            ))}
+          </div>
         </section>
       </div>
 
